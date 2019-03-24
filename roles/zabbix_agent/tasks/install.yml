@@ -1,0 +1,5 @@
+---
+- name: install zabbix_agent
+  yum: 
+    name: "zabbix-agent-{{ zabbix_agent_verison }}"
+    state: present

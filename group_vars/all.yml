@@ -1,0 +1,21 @@
+---
+#######system variables############
+region: JDT
+interface_net: 172.28.180.0/24
+
+##########zabbix###################
+#######zabbix-agent#############
+zabbix_agent_server: 172.28.180.120
+zabbix_agent_script:
+  - disk_io_discovery.py
+  - disk_io_status.sh
+  - zabbix-docker.py
+######Zabbix API stuff##########
+zabbix_url: http://172.28.180.59/zabbix/
+zabbix_api_user: Admin
+zabbix_api_pass: zabbix
+zabbix_proxy: zabbix-proxy-test
+zabbix_host_groups: JDT
+zabbix_link_templates:
+  - Template App Docker
+  - base OS Linux_openstack

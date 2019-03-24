@@ -1,0 +1,33 @@
+---
+#######zabbix-agent################
+zabbix_agent_verison: "4.0.3"
+zabbix_agent_config:
+  - zabbix_agentd.conf
+######Zabbix API stuff############
+zabbix_api_version: "0.5.3"
+zabbix_api_create_hostgroup: True
+zabbix_api_create_hosts: True
+zabbix_create_hostgroup: present  # or absent
+zabbix_create_host: present       # or absent
+zabbix_update_host: yes
+zabbix_host_status: enabled       # or disabled enabled
+zabbix_agent_hostname: "{{ inventory_hostname }}"
+zabbix_useuip: 1
+zabbix_agent_interfaces:
+  - type: 1
+    main: 1
+    useip: "{{ zabbix_useuip }}"
+    ip: "{{ inventory_hostname }}"
+    dns: ""
+    port: "{{ zabbix_agent_listenport }}"
+# Zabbix configuration variables
+zabbix_agent_pidfile: /var/run/zabbix/zabbix_agentd.pid
+zabbix_agent_logfile: /var/log/zabbix/zabbix_agentd.log
+zabbix_agent_logfilesize: 0
+zabbix_agent_timeout: 30
+zabbix_agent_allowroot: 1
+zabbix_agent_serveractive: 127.0.0.1
+zabbix_agent_include: /etc/zabbix/zabbix_agentd.d
+zabbix_agent_unsafeuserparameters: 1
+zabbix_agent_listenport: 10050
+zabbix_agent_become_on_localhost: True

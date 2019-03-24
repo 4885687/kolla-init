@@ -1,0 +1,63 @@
+#!/bin/sh
+echo "starting forward..."
+if [ -e /proc/sys/net/ipv4/tcp_ecn ]
+then
+echo 0 > /proc/sys/net/ipv4/tcp_ecn
+fi
+echo 1  > /proc/sys/net/ipv4/tcp_syncookies
+
+LOCAL_CIDR=${1:-"{{interface_net}}"}
+
+/sbin/iptables -F INPUT
+/sbin/iptables -F OUTPUT
+/sbin/iptables -F FORWARD
+/sbin/iptables -F -t nat
+/sbin/iptables -A INPUT -i lo -j ACCEPT
+
+# Internal
+/sbin/iptables -A INPUT -s ${LOCAL_CIDR} -j ACCEPT
+# Manage
+/sbin/iptables -A INPUT -s 192.168.66.223 -p tcp --dport 22 -j ACCEPT
+/sbin/iptables -A INPUT -s 192.168.66.229 -p tcp --dport 22 -j ACCEPT
+/sbin/iptables -A INPUT -s 192.168.66.114 -p tcp --dport 22 -j ACCEPT
+/sbin/iptables -A INPUT -s 192.168.66.115 -p tcp --dport 22 -j ACCEPT
+/sbin/iptables -A INPUT -s 192.168.66.200 -p tcp --dport 22 -j ACCEPT
+
+# OpenStack Specific
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8780   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 9292   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 9200   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 80     -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 3000   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 1567   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8889   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 3535   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8000   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 9696   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 6080   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 5601   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8004   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8774   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8775   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 9191   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8776   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 5000   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8777   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8041   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 3306   -j ACCEPT
+/sbin/iptables -A INPUT -s 10.1.10.55,192.168.66.0/24 -p tcp  --dport 8042   -j ACCEPT
+
+# Ping
+/sbin/iptables -A INPUT -p icmp  -j ACCEPT
+
+# Default
+/sbin/iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+/sbin/iptables -P INPUT DROP
+
+#Zabbix
+TODO: add proxy_ip_address
+/sbin/iptables -I INPUT -p tcp -s {{ zabbix_agent_server }} --dport 10050 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp -s {{ zabbix_agent_server }} --dport 10051 -j ACCEPT
+
+# Other
+

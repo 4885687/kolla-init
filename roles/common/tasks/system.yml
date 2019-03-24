@@ -1,0 +1,93 @@
+---
+- name: stop and disable unnecessary service
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  with_items:
+    - firewalld.service 
+    - postfix..service 
+    - NetworkManager.service 
+    - chronyd.service 
+    - libvirtd.service
+  ignore_errors: yes
+  failed_when: False
+
+- name: disable seliux
+  selinux: state=disabled
+
+- name: sync netfilter module config
+  template:
+    src: netfilter.conf
+    dest: /etc/modules-load.d/netfilter.conf
+  tags: sync_netfilter
+
+- name: modify sysctl config
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_dict:
+     {'vm.swappiness': '0','net.ipv4.ip_forward': '1'}
+
+- name: modify limits file  
+  pam_limits:
+    domain: "*"
+    limit_type: "{{ item[0] }}"
+    limit_item: "{{ item[1]}}"
+    value: 65535
+  with_nested:
+    - [ 'soft','hard']
+    - [ 'nofile','nproc' ]
+
+- name: add kvm_intel modprobe
+  modprobe:
+    name: kvm_intel
+    state: present
+    params: nested = 1
+
+- name: update ssh_config configuration block in /etc/ssh/sshd_config
+  blockinfile:
+    path: /etc/ssh/sshd_config
+    block: |
+       UseDNS no
+  notify: restart sshd
+  tags: sshd
+
+- name: update nameserver configuration block in /etc/resolv.conf
+  blockinfile:
+    path: /etc/resolv.conf
+    block: |
+        nameserver 114.114.114.114
+
+- name: check bond0  stat
+  stat:
+    path: /etc/sysconfig/network-scripts/ifcfg-bond0
+  register: bond0
+
+- name: update ifcfg-bond0 configuration block 
+  blockinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-bond0
+    block: |
+        BONDING_OPTS="mode=4 miimon=100 lacp_rate=1 xmit_hash_policy=2"
+        MTU=1500
+  when: bond0.stat.exists
+
+- name: add  history format 
+  blockinfile:
+    path: /root/.bash_profile
+    block: |
+        export HISTTIMEFORMAT="`whoami` %F %T :"
+
+- name: update rc.local config
+  lineinfile:
+    path: /etc/rc.d/rc.local
+    line: sysctl -p
+
+- name: update network config
+  lineinfile:
+    path: /etc/sysconfig/network
+    state: present
+    line: NOZEROCONF=yes

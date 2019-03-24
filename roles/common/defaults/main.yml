@@ -1,0 +1,49 @@
+---
+url: http://192.168.66.230/tools/
+
+docker_version: 17.09.1.ce
+
+openstack_comm_package:
+  - bash-completion
+  - bridge-utils
+  - dstat
+  - gcc
+  - git
+  - hdparm
+  - iotop
+  - iperf
+  - iperf3
+  - ipmitool
+  - libffi-devel
+  - mariadb
+  - MySQL-python
+  - nethogs
+  - net-snmp
+  - net-tools
+  - ntp
+  - ntpdate
+  - python-pip
+  - python-tooz
+  - qemu-img
+  - screen
+  - sdparm
+  - sshpass
+  - sysstat
+  - tcpdump
+  - telnet
+  - tmux
+  - vim-enhanced
+  - wget
+  - tree
+  - libvirt-client
+
+openstack_control_package:
+  - python2-ceilometerclient
+  - python2-cloudkittyclient
+  - python2-gnocchiclient
+  - python2-heatclient
+  - python2-neutronclient
+  - python2-PyMySQL
+  - python-devel
+  - python-docker-py
+  - python-openstackclient

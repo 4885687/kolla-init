@@ -1,0 +1,20 @@
+---
+- name: sync zabbix-agent conf
+  template:
+    src: "{{ item }}"
+    dest: "/etc/zabbix/{{ item }}"
+    backup: yes
+  with_items: "{{ zabbix_agent_config }}"
+  notify: restart zabbix_agent
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: import item to zabbix
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/zabbix/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ zabbix_agent_script }}"

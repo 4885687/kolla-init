@@ -1,0 +1,54 @@
+---
+- name: ensuring pip config directories exist
+  file:
+    path: /root/.pip
+    state: directory
+    mode: 0755
+
+- name: config pip 
+  get_url:
+    url: "{{ url }}/pip.conf"
+    dest: /root/.pip/
+    mode: 644
+
+- name: ensuring config directories exist
+  file:
+    path: "/etc/{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - docker
+    - systemd/system/docker.service.d
+
+- name: sync docker daemon config file
+  template:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- name: sync docker-system-kolla config
+  template:
+    src: kolla.conf
+    dest: /etc/systemd/system/docker.service.d/kolla.conf
+
+- name: install docker-ce-17.09.1
+  yum:
+    name: "docker-ce-{{ docker_version }}"
+    state: present
+  notify: start docker
+
+- name: pip install docker package
+  pip:
+    name: docker
+    version: 3.3.0
+    state: present
+
+- name: pip install docker-py package
+  pip:
+    name: docker-py
+    version: 1.10.6
+    state: present
+  tags: pip
+
+- name: check docker availability
+  script: docker_change.sh
+  tags: check

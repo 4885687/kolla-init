@@ -1,0 +1,40 @@
+---
+- name: installing the Zabbix-api package on localhost
+  pip:
+    name: zabbix-api
+    version: "{{ zabbix_api_version }}" 
+    state: present
+  register: zabbix_api_package_installed
+  until: zabbix_api_package_installed is succeeded
+  delegate_to: localhost
+  run_once: True
+  when: zabbix_api_create_hostgroup | bool  or
+        zabbix_api_create_hosts | bool
+
+- name: create hostgroups
+  zabbix_group:
+    server_url: "{{ zabbix_url }}"
+    login_user: "{{ zabbix_api_user }}"
+    login_password: "{{ zabbix_api_pass }}"
+    host_group: "{{ zabbix_host_groups }}"
+    state: "{{ zabbix_create_hostgroup }}"
+  delegate_to: localhost
+  #run_once: True
+
+- name: Create a new host or update an existing host
+  zabbix_host:
+    server_url: "{{ zabbix_url }}"
+    login_user: "{{ zabbix_api_user }}"
+    login_password: "{{ zabbix_api_pass }}"
+    host_name: "{{ zabbix_agent_hostname }}"
+    host_groups: "{{ zabbix_host_groups }}"
+    link_templates: "{{ zabbix_link_templates }}"
+    status: "{{ zabbix_host_status }}"
+    state: "{{ zabbix_create_host }}"
+    force: "{{ zabbix_update_host }}"
+    proxy: "{{ zabbix_proxy }}"
+    interfaces: "{{ zabbix_agent_interfaces }}"
+  when: 
+    - zabbix_api_create_hosts | bool
+  delegate_to: localhost
+ # run_once: True

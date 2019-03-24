@@ -1,0 +1,18 @@
+[H17]
+172.28.180.164 type=control
+[G3]
+172.28.180.167
+[M2]
+172.28.180.166 type=control
+[B3]
+172.28.180.161
+172.28.180.163
+
+[control:children]
+H17
+
+[compute:children]
+H17
+M2
+B3
+G3

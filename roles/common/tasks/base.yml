@@ -1,0 +1,67 @@
+---
+- name: check backup dir is exists
+  stat:
+    path: /etc/yum.repos.d/backup/
+  register: backup_dir
+
+- name: ensuring yum backup  directories exist
+  file:
+    path: /etc/yum.repos.d/backup/
+    state: directory
+    recurse: yes
+
+- name: backup origin yum config file
+  shell: mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup/
+  when: not backup_dir.stat.exists
+
+- name: config yum repo
+  get_url:
+    url: "{{ url }}/cloud7.repo"
+    dest: /etc/yum.repos.d/
+    mode: 644
+
+- name: install necessary package on compute
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ openstack_comm_package }}"
+
+- name: install necessary package on control
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:  "{{ openstack_control_package }}"
+  when: inventory_hostname in groups['control']
+  tags: control
+
+- name: sync forward
+  template:
+    src: forward
+    dest: /etc/rc.d/forward
+    backup: yes
+    owner: root
+    group: root
+    mode: 0755
+  notify: apply forward
+
+- name: setup_hostname_el7
+  shell: hostnamectl set-hostname {{region}}-{{group_names[0]}}-Cloud{{inventory_hostname.split('.')[3]}} --{{item}}
+  with_items:
+    - static
+    - transient
+    - pretty
+  when: ansible_distribution_major_version|int == 7
+
+- name: setup_hostname_el6
+  shell: name={{region}}-{{group_names[0]}}-Cloud{{inventory_hostname.split('.')[3]}}
+  when: ansible_distribution_major_version|int == 6
+
+- name: sync  system hosts
+  template:
+    src: hosts
+    dest: /etc/hosts
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  tags: hosts

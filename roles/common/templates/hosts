@@ -1,0 +1,9 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+{% for host in groups %}
+{% if host != 'compute' and host != 'control' and host != "all" and host != 'ungrouped' %}
+{% for ip in groups[host] %}
+{{ip}} {{region}}-{{host}}-Cloud{{ip.split('.')[3]}}
+{% endfor %}
+{% endif %}
+{% endfor %}

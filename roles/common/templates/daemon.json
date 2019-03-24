@@ -1,0 +1,7 @@
+{
+  "insecure-registries": ["0.0.0.0/0"],
+  "log-opts": {
+    "max-size": "20m",
+    "max-file": "5"
+  }
+}

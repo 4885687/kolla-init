@@ -1,0 +1,24 @@
+---
+- name: Gather facts for all hosts
+  hosts: all
+  serial: '{{ serial|default("0") }}'
+  gather_facts: false
+  tasks:
+    - setup:
+  tags: always
+
+- name: Apply  init on all hosts
+  hosts: all
+  gather_facts: false
+  serial: '{{ serial|default("0") }}'
+  roles:
+    - { role: common,
+        tags: common }
+
+- name: Apply role zabbix_agent
+  hosts: all
+  gather_facts: false
+  serial: '{{ serial|default("0") }}'
+  roles:
+    - { role: zabbix_agent,
+        tags: zabbix_agent }

@@ -1,0 +1,14 @@
+---
+- name: apply forward
+  shell: source  /etc/rc.d/forward
+
+- name: restart sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: start docker
+  service:
+    name: docker
+    state: started
+    
