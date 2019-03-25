@@ -35,6 +35,7 @@
     name: "docker-ce-{{ docker_version }}"
     state: present
   notify: start docker
+  changed_when: True
 
 - name: pip install docker package
   pip:

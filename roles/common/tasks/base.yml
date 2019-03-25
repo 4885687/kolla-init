@@ -13,6 +13,7 @@
 - name: backup origin yum config file
   shell: mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup/
   when: not backup_dir.stat.exists
+  failed: False
 
 - name: config yum repo
   get_url:
