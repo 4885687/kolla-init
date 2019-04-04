@@ -13,7 +13,7 @@
 - name: backup origin yum config file
   shell: mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup/
   when: not backup_dir.stat.exists
-  failed: False
+  failed_when: False
 
 - name: config yum repo
   get_url:
@@ -34,6 +34,12 @@
   with_items:  "{{ openstack_control_package }}"
   when: inventory_hostname in groups['control']
   tags: control
+
+- name: config ceph conf
+  get_url:
+    url: "{{ url }}/{{ region }}_{{ ceph_type }}_ceph.conf"
+    dest: /etc/ceph/ceph.conf
+    mode: 644
 
 - name: sync forward
   template:

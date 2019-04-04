@@ -1,45 +1,5 @@
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-192.168.24.100 SJ-F13-Cloud100
-192.168.24.101 SJ-F13-Cloud101
-192.168.24.102 SJ-F13-Cloud102
-192.168.24.103 SJ-F13-Cloud103
-192.168.24.104 SJ-F13-Cloud104
-192.168.24.110 SJ-F13-Cloud110
-192.168.24.111 SJ-F13-Cloud111
-192.168.24.125 SJ-F11-Cloud125
-192.168.24.126 SJ-F11-Cloud126
-192.168.24.127 SJ-F11-Cloud127
-192.168.24.128 SJ-F11-Cloud128
-192.168.24.129 SJ-F11-Cloud129
-192.168.24.130 SJ-F11-Cloud130
-192.168.24.112 SJ-F12-Cloud112
-192.168.24.113 SJ-F12-Cloud113
-192.168.24.114 SJ-F12-Cloud114
-192.168.24.115 SJ-F12-Cloud115
-192.168.24.116 SJ-F12-Cloud116
-############add 20181225 14###
-192.168.24.7 SJ-H3-Cloud7
-192.168.24.8 SJ-H3-Cloud8
-192.168.24.9 SJ-H3-Cloud9
-192.168.24.10 SJ-H3-Cloud10
-192.168.24.11 SJ-H3-Cloud11
-192.168.24.12 SJ-H3-Cloud12
-192.168.24.14 SJ-H3-Cloud14
-192.168.24.15 SJ-H3-Cloud15
-192.168.24.16 SJ-H3-Cloud16
-192.168.24.17 SJ-H4-Cloud17
-192.168.24.18 SJ-H4-Cloud18
-192.168.24.19 SJ-H4-Cloud19
-192.168.24.20 SJ-H4-Cloud20
-192.168.24.21 SJ-H4-Cloud21
-192.168.24.24 SJ-H6-Cloud24
-192.168.24.25 SJ-H6-Cloud25
-192.168.24.26 SJ-H6-Cloud26
-192.168.24.4 SJ-H5-Cloud4
-192.168.24.5 SJ-H5-Cloud5
-192.168.24.22 SJ-H5-Cloud22
-192.168.24.23 SJ-H5-Cloud23
 {% for host in groups %}
 {% if host != 'compute' and host != 'control' and host != "all" and host != 'ungrouped' %}
 {% for ip in groups[host] %}

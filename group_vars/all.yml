@@ -3,6 +3,8 @@
 region: SJ
 interface_net: 192.168.24.0/24
 
+#######ceph config#################
+ceph_type: ssd
 ##########zabbix###################
 #######zabbix-agent#############
 zabbix_agent_server: 192.168.68.127

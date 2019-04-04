@@ -36,6 +36,7 @@ openstack_comm_package:
   - wget
   - tree
   - libvirt-client
+  - ceph-common
 
 openstack_control_package:
   - python2-ceilometerclient
